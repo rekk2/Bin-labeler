@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Label Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .preview-label {
+            border: 1px solid black;
+            width: 3in;
+            height: 1in;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            padding: 5px;
+            font-size: 10px;
+        }
+        .preview-label div {
+            width: 48%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Label Generator</h1>
+    <form id="label-form">
+        <div class="form-group">
+            <label for="part_numbers">Paste Part Numbers (one per line):</label>
+            <textarea id="part_numbers" name="part_numbers" required></textarea>
+        </div>
+        <button type="button" id="generate-fields-btn">Generate Fields</button>
+
+        <div class="dynamic-fields"></div>
+
+        <button type="button" onclick="previewLabels()">Preview Labels</button>
+        <div id="label-previews"></div>
+
+        <button type="submit">Generate PDF</button>
+    </form>
+
+    <script>
+        document.getElementById('generate-fields-btn').addEventListener('click', function() {
+            generateFields();
+        });
+
+        function generateFields() {
+            const partNumbers = document.getElementById('part_numbers').value.split('\n');
+            const container = document.querySelector('.dynamic-fields');
+            container.innerHTML = ''; // Clear previous fields
+
+            partNumbers.forEach(partNumber => {
+                if (partNumber.trim() !== '') {
+                    const div = document.createElement('div');
+                    div.classList.add('form-group');
+
+                    // Left side fields
+                    const leftDiv = document.createElement('div');
+                    leftDiv.innerHTML = `<label>Left Side for ${partNumber.trim()}</label>
+                        <input type="text" name="left_part_number_${partNumber.trim()}" placeholder="Part Number">
+                        <input type="text" name="left_alt_${partNumber.trim()}" placeholder="Alt Part Number">
+                        <input type="text" name="left_qty_${partNumber.trim()}" placeholder="Quantity">
+                        <input type="text" name="left_location_${partNumber.trim()}" placeholder="A-Frame Location">`;
+
+                    // Right side fields
+                    const rightDiv = document.createElement('div');
+                    rightDiv.innerHTML = `<label>Right Side for ${partNumber.trim()}</label>
+                        <input type="text" name="right_part_number_${partNumber.trim()}" placeholder="Part Number">
+                        <input type="text" name="right_alt_${partNumber.trim()}" placeholder="Alt Part Number">
+                        <input type="text" name="right_qty_${partNumber.trim()}" placeholder="Quantity">
+                        <input type="text" name="right_location_${partNumber.trim()}" placeholder="A-Frame Location">`;
+
+                    div.appendChild(leftDiv);
+                    div.appendChild(rightDiv);
+
+                    container.appendChild(div);
+                }
+            });
+        }
+
+        function previewLabels() {
+            const container = document.querySelector('#label-previews');
+            container.innerHTML = ''; // Clear previous previews
+
+            const labelsData = collectFormData();
+
+            labelsData.forEach(label => {
+                const previewDiv = document.createElement('div');
+                previewDiv.classList.add('preview-label');
+
+                const leftSide = document.createElement('div');
+                leftSide.innerHTML = `<strong>${label.left.part_number}</strong><br>
+                    ${label.left.alt_part_number}<br>
+                    Qty: ${label.left.quantity}<br>
+                    ${label.left.a_frame_location}`;
+
+                const rightSide = document.createElement('div');
+                rightSide.innerHTML = `<strong>${label.right.part_number}</strong><br>
+                    ${label.right.alt_part_number}<br>
+                    Qty: ${label.right.quantity}<br>
+                    ${label.right.a_frame_location}`;
+
+                previewDiv.appendChild(leftSide);
+                previewDiv.appendChild(rightSide);
+
+                container.appendChild(previewDiv);
+            });
+        }
+
+        function collectFormData() {
+            const form = document.querySelector('#label-form');
+            const formData = new FormData(form);
+            const labelsData = [];
+
+            const partNumbers = document.getElementById('part_numbers').value.split('\n');
+            partNumbers.forEach(partNumber => {
+                labelsData.push({
+                    left: {
+                        part_number: formData.get(`left_part_number_${partNumber.trim()}`),
+                        alt_part_number: formData.get(`left_alt_${partNumber.trim()}`),
+                        quantity: formData.get(`left_qty_${partNumber.trim()}`),
+                        a_frame_location: formData.get(`left_location_${partNumber.trim()}`)
+                    },
+                    right: {
+                        part_number: formData.get(`right_part_number_${partNumber.trim()}`),
+                        alt_part_number: formData.get(`right_alt_${partNumber.trim()}`),
+                        quantity: formData.get(`right_qty_${partNumber.trim()}`),
+                        a_frame_location: formData.get(`right_location_${partNumber.trim()}`)
+                    }
+                });
+            });
+
+            return labelsData;
+        }
+
+        document.getElementById('label-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const labelsData = collectFormData();
+            
+            fetch('/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ labels_data: labelsData }),
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'labels.pdf';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
