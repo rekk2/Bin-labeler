@@ -1,6 +1,6 @@
 # BinLabeler
 
-BinLabeler is a Flask web application that generates labels for parts bins in a manufacturing or inventory environment. This application allows users to create, save, and print labels that include part numbers, quantities, and location information. It also supports color-coded workstations and handles floor stock automatically.
+BinLabeler is a Flask web application that generates labels for parts bins. This application allows users to create, save, and print labels that include part numbers, quantities, and location information. It also supports color-coded workstations and handles floor stock automatically.
 
 ## Features
 
