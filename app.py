@@ -60,8 +60,14 @@ def save_workstations():
     # Create a dictionary of the current workstations for easy lookup
     workstation_dict = {ws['name']: ws for ws in existing_workstations}
 
-    # Update or add the new workstations
+    # Update or add the new workstations, ensuring no duplicates in labels
     for ws in workstations:
+        unique_labels = {}
+        for label in ws['labels']:
+            part_number = label['left']['part_number']
+            if part_number not in unique_labels:
+                unique_labels[part_number] = label
+        ws['labels'] = list(unique_labels.values())
         workstation_dict[ws['name']] = ws
 
     # Convert back to a list
@@ -71,9 +77,20 @@ def save_workstations():
     save_json_data(WORKSTATION_DATA_FILE, updated_workstations)
     return jsonify({"status": "success", "message": "Workstations saved successfully!"})
 
-@app.route("/load_workstations", methods=["GET"])
+
 def load_workstations():
     workstations = load_json_data(WORKSTATION_DATA_FILE)
+
+    # Remove duplicate labels for each workstation based on left part number
+    for workstation in workstations:
+        unique_labels = {}
+        for label in workstation['labels']:
+            part_number = label['left']['part_number']
+            if part_number not in unique_labels:
+                unique_labels[part_number] = label
+        # Replace the labels with only unique ones
+        workstation['labels'] = list(unique_labels.values())
+
     return jsonify({"status": "success", "workstations": workstations})
 
 @app.route("/save_product_lines", methods=["POST"])
@@ -258,3 +275,4 @@ def index():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
