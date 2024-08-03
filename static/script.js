@@ -270,41 +270,58 @@ function generateFieldsFromList() {
         alert("Please select a workstation.");
     }
 }
-
-// Function to load parts for a selected workstation
 function loadPartsForWorkstation(workstationName) {
     const workstation = workstations.find(ws => ws.name === workstationName);
     if (workstation) {
         const container = document.querySelector('.dynamic-fields');
         container.innerHTML = ''; 
 
-        const filteredLabels = filterNullLabels(workstation.labels);
+        const filteredLabels = filterUniqueLabels(filterNullLabels(workstation.labels));
 
         filteredLabels.forEach(label => {
-            checkIfFloorStock(label.left.part_number, (floorStockLocation) => {
-                addPartFields(
-                    label.left.part_number,
-                    workstationName,
-                    floorStockLocation,
-                    {
-                        left: {
-                            part_number: label.left.part_number,
-                            alt_part_number: label.left.alt_part_number,
-                            quantity: floorStockLocation ? floorStockLocation : label.left.quantity,
-                            a_frame_location: label.left.a_frame_location,
-                        },
-                        right: {
-                            part_number: label.right.part_number,
-                            alt_part_number: label.right.alt_part_number,
-                            quantity: label.right.quantity,
-                            a_frame_location: label.right.a_frame_location,
+            // Check if the part number is already added to the container
+            if (!container.querySelector(`input[name="left_part_number_${label.left.part_number}"]`)) {
+                checkIfFloorStock(label.left.part_number, (floorStockLocation) => {
+                    addPartFields(
+                        label.left.part_number,
+                        workstationName,
+                        floorStockLocation,
+                        {
+                            left: {
+                                part_number: label.left.part_number,
+                                alt_part_number: label.left.alt_part_number,
+                                quantity: floorStockLocation ? floorStockLocation : label.left.quantity,
+                                a_frame_location: label.left.a_frame_location,
+                            },
+                            right: {
+                                part_number: label.right.part_number,
+                                alt_part_number: label.right.alt_part_number,
+                                quantity: label.right.quantity,
+                                a_frame_location: label.right.a_frame_location,
+                            }
                         }
-                    }
-                );
-            });
+                    );
+                });
+            }
         });
     }
 }
+
+// Function to filter out unique labels based on part numbers
+function filterUniqueLabels(labels) {
+    const uniqueLabels = [];
+    const seenParts = new Set();
+
+    labels.forEach(label => {
+        if (!seenParts.has(label.left.part_number)) {
+            uniqueLabels.push(label);
+            seenParts.add(label.left.part_number);
+        }
+    });
+
+    return uniqueLabels;
+}
+
 
 // Function to add part fields for both left and right sides
 function addPartFields(partNumber, workstationName, floorStockLocation, partData = {}) {
