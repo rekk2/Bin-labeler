@@ -16,7 +16,7 @@ Follow these steps to set up the application locally:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/binlabeler.git
+   git clone https://github.com/rekk2/Bin-labeler.git
    cd binlabeler
 2. ``` bash
    pip install -r requirements.txt
