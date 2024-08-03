@@ -1,0 +1,59 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.color-box {
+    width: 100px;   /* Adjust the width to make it smaller */
+    height: 100px;  /* Adjust the height to make it taller */
+    border: 1px solid #000;
+    display: inline-block;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.color-picker {
+    width: 50px;  /* Set width */
+    height: 50px; /* Set height */
+    border: none; /* Remove the border */
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    width: 150px;
+}
+
+.form-group input, .form-group textarea, .form-group select {
+    width: calc(100% - 160px);
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+
+.workstation-list, .part-input-methods {
+    margin-bottom: 20px;
+}
+
+.workstation, .part-entry, .product-line {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+}
+
+.workstation h3, .part-entry h3, .product-line h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+}
