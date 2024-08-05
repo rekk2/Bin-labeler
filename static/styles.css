@@ -1,4 +1,3 @@
-/* styles.css */
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
@@ -6,9 +5,13 @@ body {
     margin: auto;
 }
 
+button {
+    margin-top: 10px;
+}
+
 .color-box {
-    width: 100px;   /* Adjust the width to make it smaller */
-    height: 100px;  /* Adjust the height to make it taller */
+    width: 100px;
+    height: 100px;
     border: 1px solid #000;
     display: inline-block;
     cursor: pointer;
@@ -16,19 +19,51 @@ body {
 }
 
 .color-picker {
-    width: 50px; 
-    height: 50px; 
-    border: none; 
+    width: 50px;
+    height: 50px;
+    border: none;
     cursor: pointer;
     margin-left: 10px;
-	max-width: 50px;
+    max-width: 50px;
+}
+
+.add-workstation, .part-input-methods, .part-search {
+    margin-bottom: 20px;
+}
+
+.product-line, .workstation {
+    width: 125px;
+    height: 155px; 
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+    margin: 5px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.product-line h4, .workstation h3 {
+    font-size: 1.1em;
+    margin: 10px 0;
+    word-wrap: break-word;
+}
+
+#product_lines, #workstations {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
 }
 
 .form-group {
-    margin-bottom: 15px;
     display: flex;
-    justify-content: flex-start;  
-    align-items: center;           
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
 }
 
 .form-group label {
@@ -43,6 +78,12 @@ body {
     box-sizing: border-box;
 }
 
+.search-result {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #f9f9f9;
+}
 
 .workstation-list, .part-input-methods {
     margin-bottom: 20px;
@@ -58,4 +99,20 @@ body {
 .workstation h3, .part-entry h3, .product-line h3 {
     margin: 0 0 10px 0;
     font-size: 1.2em;
+}
+
+/* Additional tweaks */
+.product-line-container, .workstation-list {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.product-line-container button, .workstation-list select {
+    margin-top: 10px;
+    align-self: flex-start;
+}
+
+.product-line-container h2, .workstation-list h2 {
+    margin-bottom: 10px;
+    font-size: 1.5em;
 }
