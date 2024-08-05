@@ -14,6 +14,40 @@ PRODUCT_LINES_FILE = "product_lines.json"
 WORKSTATION_DATA_FILE = "workstations.json"
 FLOOR_STOCK_FILE = "floor_stock.xlsx"  # Path to your Excel file
 
+@app.route("/search_part", methods=["POST"])
+def search_part():
+    part_number = request.json.get('part_number', '').strip()
+    if not part_number:
+        return jsonify({"status": "error", "message": "No part number provided."})
+
+    workstations = load_json_data(WORKSTATION_DATA_FILE)
+    results = []
+
+    for workstation in workstations:
+        product_line = workstation['product_line']
+        workstation_name = workstation['name']
+        for label in workstation['labels']:
+            if label['left']['part_number'] == part_number:
+                results.append({
+                    "product_line": product_line,
+                    "workstation_name": workstation_name,
+                    "a_frame_location": label['left']['a_frame_location'],
+                    "side": "Left"
+                })
+            if label['right']['part_number'] == part_number:
+                results.append({
+                    "product_line": product_line,
+                    "workstation_name": workstation_name,
+                    "a_frame_location": label['right']['a_frame_location'],
+                    "side": "Right"
+                })
+
+    if results:
+        return jsonify({"status": "success", "results": results})
+    else:
+        return jsonify({"status": "not_found", "message": "Part number not found in any workstation."})
+
+
 # Helper function to save JSON data to a file
 def save_json_data(file_path, data):
     with open(file_path, 'w') as file:
@@ -81,14 +115,13 @@ def save_workstations():
 def load_workstations():
     workstations = load_json_data(WORKSTATION_DATA_FILE)
 
-    # Remove duplicate labels for each workstation based on left part number
+    #Remove duplicates
     for workstation in workstations:
         unique_labels = {}
         for label in workstation['labels']:
             part_number = label['left']['part_number']
             if part_number not in unique_labels:
                 unique_labels[part_number] = label
-        # Replace the labels with only unique ones
         workstation['labels'] = list(unique_labels.values())
 
     return jsonify({"status": "success", "workstations": workstations})
@@ -189,7 +222,6 @@ def draw_label_content(c, label_side, x_position, y_position, label_width, label
     workstation_name = label_side.get('workstation_name', '') or ''
     workstation_color = label_side.get('workstation_color', '#FFFFFF')  # Default color is white if not specified
 
-    # Ensure text is always black
     c.setFillColor("black")
 
     # Determine font size for part number
@@ -225,7 +257,7 @@ def draw_label_content(c, label_side, x_position, y_position, label_width, label
 
     # Check if the quantity is prefixed with "FS-" to determine if it's floor stock
     if quantity.startswith("FS-"):
-        display_text = quantity  # Already formatted as "FS-Location"
+        display_text = quantity  
     else:
         display_text = f"Qty: {quantity}"
 
@@ -275,4 +307,5 @@ def index():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
