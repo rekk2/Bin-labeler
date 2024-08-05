@@ -9,7 +9,18 @@
 <body>
     <h1>BinLabeler</h1>
 
-    <div class="product-line">
+	<div class="part-search">
+		<h2>Search Part Number</h2>
+		<div class="form-group">
+			<label for="search_part_number">Part Number:</label>
+			<input type="text" id="search_part_number" placeholder="Enter part number">
+			<button type="button" onclick="searchPartNumber()">Search</button>
+		</div>
+		<div id="search_results"></div>
+	</div>
+
+
+    <div class="product-line-container">
         <h2>Product Lines</h2>
         <div id="product_lines"></div>
         <button type="button" onclick="addProductLine()">Add Product Line</button>
@@ -23,20 +34,18 @@
         <div id="workstations"></div>
     </div>
 
-
-	<div class="add-workstation">
-		<h2>Add Workstation</h2>
-		<div class="form-group">
-			<label for="workstation_name">Workstation Name:</label>
-			<input type="text" id="workstation_name" placeholder="Enter Workstation Name">
-		</div>
-		<div class="form-group">
-			<label for="workstation_color">Workstation Color:</label>
-			<input type="color" id="workstation_color" value="#ff0000" class="color-picker">
-		</div>
-		<button type="button" onclick="addWorkstation()">Add Workstation</button>
-	</div>
-
+    <div class="add-workstation">
+        <h2>Add Workstation</h2>
+        <div class="form-group">
+            <label for="workstation_name">Workstation Name:</label>
+            <input type="text" id="workstation_name" placeholder="Enter Workstation Name">
+        </div>
+        <div class="form-group">
+            <label for="workstation_color">Workstation Color:</label>
+            <input type="color" id="workstation_color" value="#ff0000" class="color-picker">
+        </div>
+        <button type="button" onclick="addWorkstation()">Add Workstation</button>
+    </div>
 
     <div class="part-input-methods">
         <h1>Part Entry</h1>
