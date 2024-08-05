@@ -7,7 +7,7 @@ function addProductLine() {
     if (productLineName) {
         productLines.push(productLineName);
         renderProductLines();
-        saveProductLines();  // Automatically save after creating a product line
+        saveProductLines();  
     }
 }
 
@@ -35,6 +35,39 @@ function renderProductLines() {
         select.appendChild(option);
     });
 }
+
+function searchPartNumber() {
+    const partNumber = document.getElementById('search_part_number').value.trim();
+    if (partNumber) {
+        fetch('/search_part', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ part_number: partNumber }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                let resultsHtml = 'Search Results:\n\n';
+                data.results.forEach(result => {
+                    resultsHtml += `Product Line: ${result.product_line}\n`;
+                    resultsHtml += `Workstation: ${result.workstation_name}\n`;
+                    resultsHtml += `A-Frame Location: ${result.a_frame_location}\n`;
+                    resultsHtml += `Side: ${result.side}\n\n`;
+                });
+                alert(resultsHtml); 
+            } else {
+                alert(data.message); 
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    } else {
+        alert("Please enter a part number to search.");
+    }
+}
+
+
 
 // Function to save the product lines to the server
 function saveProductLines() {
